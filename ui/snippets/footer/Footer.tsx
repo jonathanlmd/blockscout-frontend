@@ -10,19 +10,15 @@ import type { ResourceError } from 'lib/api/resources';
 import useApiQuery from 'lib/api/useApiQuery';
 import useFetch from 'lib/hooks/useFetch';
 import useIssueUrl from 'lib/hooks/useIssueUrl';
-import { copy } from 'lib/html-entities';
-import IconSvg from 'ui/shared/IconSvg';
 import { CONTENT_MAX_WIDTH } from 'ui/shared/layout/utils';
 import NetworkAddToWallet from 'ui/shared/NetworkAddToWallet';
 
+import NetworkLogo from '../networkMenu/NetworkLogo';
 import FooterLinkItem from './FooterLinkItem';
 import IntTxsIndexingStatus from './IntTxsIndexingStatus';
 import getApiVersionUrl from './utils/getApiVersionUrl';
 
 const MAX_LINKS_COLUMNS = 4;
-
-const FRONT_VERSION_URL = `https://github.com/blockscout/frontend/tree/${ config.UI.footer.frontendVersion }`;
-const FRONT_COMMIT_URL = `https://github.com/blockscout/frontend/commit/${ config.UI.footer.frontendCommit }`;
 
 const Footer = () => {
 
@@ -80,18 +76,6 @@ const Footer = () => {
     },
   ];
 
-  const frontendLink = (() => {
-    if (config.UI.footer.frontendVersion) {
-      return <Link href={ FRONT_VERSION_URL } target="_blank">{ config.UI.footer.frontendVersion }</Link>;
-    }
-
-    if (config.UI.footer.frontendCommit) {
-      return <Link href={ FRONT_COMMIT_URL } target="_blank">{ config.UI.footer.frontendCommit }</Link>;
-    }
-
-    return null;
-  })();
-
   const fetch = useFetch();
 
   const { isPlaceholderData, data: linksData } = useQuery<unknown, ResourceError<unknown>, Array<CustomLinksGroup>>({
@@ -124,17 +108,17 @@ const Footer = () => {
     return (
       <Box gridArea={ gridArea }>
         <Flex columnGap={ 2 } fontSize="xs" lineHeight={ 5 } alignItems="center" color="text">
-          <span>Made with</span>
-          <Link href="https://www.blockscout.com" isExternal display="inline-flex" color={ logoColor } _hover={{ color: logoColor }}>
-            <IconSvg
-              name="networks/logo-placeholder"
-              width="80px"
-              height={ 4 }
-            />
+          <Link href="https://explorer1.rollux.com" isExternal display="inline-flex" color={ logoColor } _hover={{ color: logoColor }}>
+            <NetworkLogo/>
           </Link>
         </Flex>
         <Text mt={ 3 } fontSize="xs">
-          Blockscout is a tool for inspecting and analyzing EVM based blockchains. Blockchain explorer for Ethereum Networks.
+          Rollux is the EVM-equivalent optimistic rollup built by SYS Labs,
+          providing the security of Bitcoin’s mining network and Syscoin’s Layer 1
+          finality and data availability. Secure, scalable, very low fees, supports Layer 3s for fractal scaling.
+        </Text>
+        <Text mt={ 3 } fontSize="xs">
+          Secured by BTC, Fueled by SYS.
         </Text>
         <Box mt={ 6 } alignItems="start" fontSize="xs" lineHeight={ 5 }>
           { apiVersionUrl && (
@@ -142,18 +126,10 @@ const Footer = () => {
               Backend: <Link href={ apiVersionUrl } target="_blank">{ backendVersionData?.backend_version }</Link>
             </Text>
           ) }
-          { frontendLink && (
-            <Text>
-              Frontend: { frontendLink }
-            </Text>
-          ) }
-          <Text>
-            Copyright { copy } Blockscout Limited 2023-{ (new Date()).getFullYear() }
-          </Text>
         </Box>
       </Box>
     );
-  }, [ apiVersionUrl, backendVersionData?.backend_version, frontendLink, logoColor ]);
+  }, [ apiVersionUrl, backendVersionData?.backend_version, logoColor ]);
 
   const containerProps: HTMLChakraProps<'div'> = {
     as: 'footer',
@@ -191,7 +167,6 @@ const Footer = () => {
           >
             {
               ([
-                { title: 'Blockscout', links: BLOCKSCOUT_LINKS },
                 ...(linksData || []),
               ])
                 .slice(0, colNum)
@@ -205,6 +180,7 @@ const Footer = () => {
                 ))
             }
           </Grid>
+
         </Grid>
       </Box>
     );
